@@ -1,0 +1,34 @@
+apiVersion: ai.sap.com/v1alpha1
+kind: ServingTemplate
+metadata:
+  name: deepseek-llm
+  annotations:
+    scenarios.ai.sap.com/description: "DeepSeek-R1 text generation"
+    scenarios.ai.sap.com/name: "DeepSeek-R1 LLM"
+    executables.ai.sap.com/description: "DeepSeek-R1 model server"
+    executables.ai.sap.com/name: "deepseek-llm"
+  labels:
+    scenarios.ai.sap.com/id: "deepseek-llm"
+    ai.sap.com/version: "1.0"
+spec:
+  template:
+    apiVersion: "serving.kserve.io/v1beta1"
+    metadata:
+      annotations: |
+        autoscaling.knative.dev/metric: concurrency
+        autoscaling.knative.dev/target: 1
+        autoscaling.knative.dev/targetBurstCapacity: 0
+      labels: |
+        ai.sap.com/resourcePlan: infer.l   # use an appropriate GPU plan
+    spec: |
+      predictor:
+        imagePullSecrets:
+        - name: Default               # or your Docker secret name
+        minReplicas: 1
+        maxReplicas: 3
+        containers:
+        - name: kserve-container
+          image: index.docker.io/ravivarmaiai/deepseek-api:latest
+          ports:
+          - containerPort: 8080
+            protocol: TCP
