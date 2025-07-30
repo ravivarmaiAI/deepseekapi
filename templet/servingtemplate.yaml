@@ -22,8 +22,6 @@ spec:
         ai.sap.com/resourcePlan: infer.l   # use an appropriate GPU plan
     spec: |
       predictor:
-        imagePullSecrets:
-        - name: Default               # or your Docker secret name
         minReplicas: 1
         maxReplicas: 3
         containers:
